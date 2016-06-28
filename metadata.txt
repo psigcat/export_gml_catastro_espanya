@@ -1,0 +1,32 @@
+# This file should be included when you package your plugin.
+# Mandatory items:
+
+[general]
+name=searchplus
+qgisMinimumVersion=2.12
+description=Este plugin sirve para exportar a gml siguiendo las indicaciones del catastro de España.
+about=Este plugin exporta una parcela selccionada a formato gml
+version=0.3
+author=Martí Angelats, David Erill, Carlos Lopez (http://psig.es/)
+email=carlos.lopez@psgi.es
+
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=catastro, gml, parcela, segregacion, matriz
+
+homepage=https://github.com/psigcat/export_gml_catastro_espanya
+tracker=https://github.com/psigcat/export_gml_catastro_espanya/issues
+repository=https://github.com/psigcat/export_gml_catastro_espanya
+category=Plugins
+icon=icon_export_gml_catastro_espanya.png
+# experimental flag
+experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+
