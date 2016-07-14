@@ -1,18 +1,54 @@
-def genereteGMLFile(layer, feature, path):
+# This function has inner functions to try to make the code more readable by starting with the most important functions.
+def genereteCadastreGMLFile(layer, feature, path):
+    """Generates a spanish cadastre's update GML file
+
+    :param layer: Layer where the information comes from.
+    :type layer: QgsMapLayer
+    :param feature: Feature in the layer that contains the information to generate the file.
+    :type feature: QgsFeature
+    :param path: str or unicode
+    """
+
+    # TODO make error to throw
+    if iface.activeLayer().type() == QgsMapLayer.VectorLayer:
+        return
+    # TODO type checks
+
+    # Function which actually does the job.
     def generateFile(layer, feature, path):
-        epsg = layer.crs().authid().split(':', 2)[1]
-        refcat = feature["REFCAT"]
-        codi_muni = format(feature["DELEGACIO"], '02d') + format(feature["MUNICIPIO"], '03d')
-        parcel_num = feature["PARCELA"]
+        """Generates the file itself
+
+        :param layer: layer where the information comes from.
+        :type layer: QgsMapLayer
+        :param feature: feature in the layer that contains the information to generate the file.
+        :type feature: QgsFeature
+        :param path: path of the file to write to (any current information will be removed)
+        :type path: str or unicode
+        """
+        # TODO add area input (comes from Qt form)
+
+        crs = layer.crs().authid().split(':', 2);
+
+        # If it is using an unkwown reference system, returns
+        # TODO make error to throw
+        if crs[0] != 'EPSG':
+            return
+        epsg = crs[1]
+
+        # Get values from the feature atributes
+        plotRef = feature["REFCAT"]
+        muniCode = format(feature["DELEGACIO"], '02d') + format(feature["MUNICIPIO"], '03d')
+        plotNum = feature["PARCELA"]
         
+        # Get geometric attributes
         bounds = feature.geometry().boundingBox()
         min_xy = "%f %f" % (bounds.xMinimum(), bounds.yMinimum()) 
         max_xy = "%f %f" % (bounds.xMaximum(), bounds.yMaximum())
         centroide_xy = "%f %f" % (QgsExpression('x(centroid($geometry))').evaluate(feature), QgsExpression('y(centroid($geometry))').evaluate(feature))
-        
         vertex_count = 0
         vertex_list = ''
         geometry = feature.geometry()
+        # TODO support more layers' geometric types
         if geometry.wkbType() == QGis.WKBPolygon:
             vertex = geometry.asPolygon()[0]
             vertex_count = len(vertex)
@@ -29,21 +65,45 @@ def genereteGMLFile(layer, feature, path):
                 pass
 
 
-
-        generated = genereteString(epsg, refcat, codi_muni, parcel_num, min_xy, max_xy, centroide_xy, vertex_count, vertex_list)
+        # Generate the string
+        generated = genereteString(epsg, plotRef, muniCode, plotNum, area, min_xy, max_xy, centroide_xy, vertex_count, vertex_list)
+        # Write the string into a file
         with open(path, 'r') as f:
-            f.truncate()
-            f.write(genereted)
+            f.truncate()        # Removing if there was an older version of the file
+            f.write(genereted)  # Writting the actual file
 
 
+    # Generates the string that will be written to the file.
+    def genereteString(epsg, plotRef, muniCode, plotNum, area, min_xy, max_xy, centroide_xy, vertex_count, vertex_list):
+        """Generates the GML string which will be written to the file
 
-    def genereteString(epsg, refcat, codi_muni, parcel_num, min_xy, max_xy, centroide_xy, vertex_count, vertex_list):
-      return u'<!-- Archivo generado automaticamente por el plugin export_gm_cadastro_espanya de QGIS -->\n\
+        :param epsg: EPSG zone number.
+        :type epsg: str or unicode
+        :param plotRef: plot reference.
+        :type plotRef: str or unicode
+        :param muniCode: municipality code.
+        :type muniCode: str or unicode
+        :param plotNum: plot number (local).
+        :type plotNum: str or unicode
+        :param min_xy: point with the minimum x and y of the plot bounds (formatted as 'x y')
+        :type min_xy: str or unicode
+        :param max_xy: point with the maximum x and y of the plot bounds (formatted as 'x y')
+        :type Max_xy: str or unicode
+        :param centroide_x: the centroid point of the plot (formatted as 'x y')
+        :type centroide_x: str or unicode
+        :param vertex_count: number of vertex points
+        :type vertex_count: str or unicode
+        :param vertex_list: list of all the vertex points (formatted as 'x1 y1 x2 y2')
+        """
+
+        # This actually returns the file adding the parameters. 
+        return u'\
 <?xml version="1.0" encoding="utf-8"?>\n\
-<!--Parcela Catastral de la D.G. del Catastro.-->\n\
+<!-- Archivo generado automaticamente por el plugin export_gm_cadastro_espanya de QGIS. -->\n\
+<!-- Parcela Catastral de la D.G. del Catastro. -->\n\
 <gml:FeatureCollection gml:id="ES.SDGC.CP" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cp="urn:x-inspire:specification:gmlas:CadastralParcels:3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:x-inspire:specification:gmlas:CadastralParcels:3.0 http://inspire.ec.europa.eu/schemas/cp/3.0/CadastralParcels.xsd">\n\
 <gml:featureMember>\n\
-<cp:CadastralParcel gml:id="ES.SDGC.CP.' + refcat + u'">\n\
+<cp:CadastralParcel gml:id="ES.SDGC.CP.' + plotRef + u'">\n\
 <gml:boundedBy>\n\
 <gml:Envelope srsName="urn:ogc:def:crs:EPSG::25831">\n\
   <gml:lowerCorner>' + min_xy + u'</gml:lowerCorner>\n\
@@ -54,9 +114,9 @@ def genereteGMLFile(layer, feature, path):
 <cp:beginLifespanVersion>2015-12-03T00:00:00</cp:beginLifespanVersion>\n\
 <cp:endLifespanVersion xsi:nil="true" nilReason="other:unpopulated"></cp:endLifespanVersion>\n\
 <cp:geometry>\n\
-<gml:MultiSurface gml:id="MultiSurface_ES.SDGC.CP.' + refcat + u'" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
+<gml:MultiSurface gml:id="MultiSurface_ES.SDGC.CP.' + plotRef + u'" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
   <gml:surfaceMember>\n\
-  <gml:Surface gml:id="Surface_ES.SDGC.CP.' + refcat + u'.1" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
+  <gml:Surface gml:id="Surface_ES.SDGC.CP.' + plotRef + u'.1" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
   <gml:patches>\n\
   <gml:PolygonPatch>\n\
   <gml:exterior>\n\
@@ -72,24 +132,24 @@ def genereteGMLFile(layer, feature, path):
 </cp:geometry>\n\
 <cp:inspireId xmlns:base="urn:x-inspire:specification:gmlas:BaseTypes:3.2">\n\
 <base:Identifier>\n\
-  <base:localId>' + parcel_num + u'</base:localId>\n\
+  <base:localId>' + plotNum + u'</base:localId>\n\
   <base:namespace>ES.LOCAL.CP</base:namespace>\n\
 </base:Identifier>\n\
 </cp:inspireId>\n\
 <cp:label>05</cp:label>\n\
 <cp:nationalCadastralReference>2</cp:nationalCadastralReference>\n\
 <cp:referencePoint>\n\
-<gml:Point gml:id="ReferencePoint_ES.SDGC.CP.' + refcat + u'" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
+<gml:Point gml:id="ReferencePoint_ES.SDGC.CP.' + plotRef + u'" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
   <gml:pos>' + centroide_xy + u'</gml:pos>\n\
 </gml:Point>\n\
 </cp:referencePoint>\n\
 <cp:validFrom xsi:nil="true" nilReason="other:unpopulated"></cp:validFrom>\n\
 <cp:validTo xsi:nil="true" nilReason="other:unpopulated"></cp:validTo>\n\
-<cp:zoning xlink:href="#ES.SDGC.CP.Z.' + codi_muni + u'U"></cp:zoning>\n\
+<cp:zoning xlink:href="#ES.SDGC.CP.Z.' + muniCode + u'U"></cp:zoning>\n\
 </cp:CadastralParcel>\n\
 </gml:featureMember>\n\
 <gml:featureMember>\n\
-<cp:CadastralZoning gml:id="ES.SDGC.CP.Z.' + codi_muni + u'U">\n\
+<cp:CadastralZoning gml:id="ES.SDGC.CP.Z.' + muniCode + u'U">\n\
 <gml:boundedBy>\n\
 <gml:Envelope srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
 <gml:lowerCorner>' + min_xy + u'</gml:lowerCorner>\n\
@@ -100,9 +160,9 @@ def genereteGMLFile(layer, feature, path):
 <cp:endLifespanVersion xsi:nil="true" nilReason="other:unpopulated"></cp:endLifespanVersion>\n\
 <cp:estimatedAccuracy uom="m">0.60</cp:estimatedAccuracy>\n\
 <cp:geometry>\n\
-<gml:MultiSurface gml:id="MultiSurface_ES.SDGC.CP.Z.' + codi_muni + u'U" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
+<gml:MultiSurface gml:id="MultiSurface_ES.SDGC.CP.Z.' + muniCode + u'U" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
 <gml:surfaceMember>\n\
-<gml:Surface gml:id="Surface_ES.SDGC.CP.Z.' + codi_muni + u'U.1" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
+<gml:Surface gml:id="Surface_ES.SDGC.CP.Z.' + muniCode + u'U.1" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'">\n\
 <gml:patches>\n\
 <gml:PolygonPatch>\n\
 <gml:exterior>\n\
@@ -118,19 +178,19 @@ def genereteGMLFile(layer, feature, path):
 </cp:geometry>\n\
 <cp:inspireId xmlns:base="urn:x-inspire:specification:gmlas:BaseTypes:3.2">\n\
 <base:Identifier>\n\
-<base:localId>' + codi_muni + u'U</base:localId>\n\
+<base:localId>' + muniCode + u'U</base:localId>\n\
 <base:namespace>ES.SDGC.CP.Z</base:namespace>\n\
 </base:Identifier>\n\
 </cp:inspireId>\n\
-<cp:label>' + codi_muni + u'U</cp:label>\n\
+<cp:label>' + muniCode + u'U</cp:label>\n\
 <cp:level codeSpace="urn:x-inspire:specification:gmlas:CadastralParcels:3.0/CadastralZoningLevelValue">1stOrder</cp:level>\n\
 <cp:levelName>\n\
 <gmd:LocalisedCharacterString locale="esp">MAPA</gmd:LocalisedCharacterString>\n\
 </cp:levelName>\n\
-<cp:nationalCadastalZoningReference>' + codi_muni + u'U</cp:nationalCadastalZoningReference>\n\
+<cp:nationalCadastalZoningReference>' + muniCode + u'U</cp:nationalCadastalZoningReference>\n\
 <cp:originalMapScaleDenominator>1000</cp:originalMapScaleDenominator>\n\
 <cp:referencePoint>\n\
-<gml:Point gml:id="ReferencePoint_ES.SDGC.CP.Z.X' + codi_muni + u'U" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'"> \n\
+<gml:Point gml:id="ReferencePoint_ES.SDGC.CP.Z.X' + muniCode + u'U" srsName="urn:ogc:def:crs:EPSG::' + epsg + u'"> \n\
 <gml:pos>' + centroide_xy + u'</gml:pos>\n\
 </gml:Point>\n\
 </cp:referencePoint>\n\
@@ -141,5 +201,7 @@ def genereteGMLFile(layer, feature, path):
 </gml:FeatureCollection>'
 
 
-    if iface.activeLayer().type() == QgsMapLayer.VectorLayer:
-        generateFile(feature, filePath)
+    
+    # ACTUAL FUNCTION CALL
+    # Generating the file.
+    generateFile(feature, filePath)
