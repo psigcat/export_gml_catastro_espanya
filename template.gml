@@ -4,7 +4,7 @@
 <gml:featureMember>
 <cp:CadastralParcel gml:id="ES.SDGC.CP.[% refcat %]">
 <gml:boundedBy>
-<gml:Envelope srsName="urn:ogc:def:crs:EPSG::25831">
+<gml:Envelope srsName="urn:ogc:def:crs:EPSG::[% epsg %]">
   <gml:lowerCorner>[% xy_min %]</gml:lowerCorner>
   <gml:upperCorner>[% xy_max %]</gml:upperCorner>
 </gml:Envelope>
@@ -55,7 +55,7 @@
 <gml:upperCorner>[% xy_max %]</gml:upperCorner>
 </gml:Envelope>
 </gml:boundedBy>
-<cp:beginLifespanVersion>2013-11-20T00:00:00</cp:beginLifespanVersion>
+<cp:beginLifespanVersion>[% data_now %]T00:00:00</cp:beginLifespanVersion>
 <cp:endLifespanVersion xsi:nil="true" nilReason="other:unpopulated"></cp:endLifespanVersion>
 <cp:estimatedAccuracy uom="m">0.60</cp:estimatedAccuracy>
 <cp:geometry>
@@ -66,7 +66,7 @@
 <gml:PolygonPatch>
 <gml:exterior>
 <gml:LinearRing>
-<gml:posList srsDimension="2" count="7">410716.56599998404 4582241.7116999887 410716.45877246361 4582245.4307895228 410721.80749998405 4582245.9224999873 410723.703499984 4582246.0839999868 410728.19864998397 4582246.4506999869 410728.38684998406 4582244.1440999871 410716.56599998404 4582241.7116999887</gml:posList>
+<gml:posList srsDimension="2" count="[% count_vertex %]">[% list_xy_vertex %]</gml:posList>
 </gml:LinearRing>
 </gml:exterior>
 </gml:PolygonPatch>
