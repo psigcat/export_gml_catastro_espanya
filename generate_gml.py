@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+"""Utilities that helps generating a spanish cadastre's GML plot file."""
+
 # This function has inner functions to try to make the code more readable by starting with the most important functions.
 def genereteCadastreGMLFile(layer, feature, path, area):
-    """Generates a spanish cadastre's update GML file
+    """Generates a spanish cadastre's GML plot file.
 
     :param layer: Layer where the information comes from.
     :type layer: QgsMapLayer
@@ -18,7 +21,7 @@ def genereteCadastreGMLFile(layer, feature, path, area):
 
     # Function which actually does the job.
     def generateFile(layer, feature, path, area):
-        """Generates the file itself
+        """Generates the GML file.
 
         :param layer: layer where the information comes from.
         :type layer: QgsMapLayer
