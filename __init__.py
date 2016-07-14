@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- export_gml_catastro_espanya - A QGIS plugin for cretae gml parcels for Spain's catastro
+ export_gml_catastro_espanya - A QGIS plugin that creates GML files of plots for the spainish catastre
                              -------------------
         begin                : 2016-06-29
         copyright            : (C) 2016 by Martí Angelats
