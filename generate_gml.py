@@ -12,9 +12,10 @@ def genereteGMLFile(layer, feature, path):
         
         vertex_count = 0
         vertex_list = ''
-        if feature.wkbType() == QGis.WKBPolygon:
-            vertex = feature.asPolygon()[0]
-            vertex_count = vertex.length
+        geometry = feature.geometry()
+        if geometry.wkbType() == QGis.WKBPolygon:
+            vertex = geometry.asPolygon()[0]
+            vertex_count = len(vertex)
 
             try:
                 iterator = iter(vertex)
