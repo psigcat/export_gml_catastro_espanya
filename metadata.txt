@@ -2,7 +2,7 @@
 # Mandatory items:
 
 [general]
-name=searchplus
+name=export_gm_cadastro_espanya
 qgisMinimumVersion=2.12
 description=Este plugin sirve para exportar a gml siguiendo las indicaciones del catastro de España.
 about=Este plugin exporta una parcela selccionada a formato gml
