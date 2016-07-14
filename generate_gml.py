@@ -1,5 +1,5 @@
 # This function has inner functions to try to make the code more readable by starting with the most important functions.
-def genereteCadastreGMLFile(layer, feature, path):
+def genereteCadastreGMLFile(layer, feature, path, area):
     """Generates a spanish cadastre's update GML file
 
     :param layer: Layer where the information comes from.
@@ -7,15 +7,17 @@ def genereteCadastreGMLFile(layer, feature, path):
     :param feature: Feature in the layer that contains the information to generate the file.
     :type feature: QgsFeature
     :param path: str or unicode
+    :type path: str or unicode
+    :param area: area that the user manually calcualted.
+    :type area: str or unicode
     """
 
-    # TODO make error to throw
     if iface.activeLayer().type() == QgsMapLayer.VectorLayer:
-        return
-    # TODO type checks
+        raise ValueError(u'La capa seleccionada es de un tipo no procesable.')
+
 
     # Function which actually does the job.
-    def generateFile(layer, feature, path):
+    def generateFile(layer, feature, path, area):
         """Generates the file itself
 
         :param layer: layer where the information comes from.
@@ -24,15 +26,15 @@ def genereteCadastreGMLFile(layer, feature, path):
         :type feature: QgsFeature
         :param path: path of the file to write to (any current information will be removed)
         :type path: str or unicode
+        :param area: area that the user manually calcualted.
+        :type area: str or unicode
         """
-        # TODO add area input (comes from Qt form)
 
         crs = layer.crs().authid().split(':', 2);
 
         # If it is using an unkwown reference system, returns
-        # TODO make error to throw
         if crs[0] != 'EPSG':
-            return
+            raise ValueError(u'El sistema de referencia de coordenadas es de un tipo no procesable')
         epsg = crs[1]
 
         # Get values from the feature atributes
@@ -199,9 +201,7 @@ def genereteCadastreGMLFile(layer, feature, path):
 </cp:CadastralZoning>\n\
 </gml:featureMember>\n\
 </gml:FeatureCollection>'
-
-
     
     # ACTUAL FUNCTION CALL
     # Generating the file.
-    generateFile(feature, filePath)
+    generateFile(feature, filePath, area)
