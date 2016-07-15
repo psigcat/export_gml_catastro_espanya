@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Utilities that helps generating a spanish cadastre's GML plot file."""
+"""Module that contains the function that generetes the a spanish cadastre's GML plot file."""
 
 from qgis.core import QGis, QgsMapLayer, QgsExpression
 import time
