@@ -29,5 +29,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :type iface: QgsInterface
     """
     #
-    from .search_plus import export_gml_catastro_espanya
+    from .export_gml_catastro_espanya import export_gml_catastro_espanya
     return export_gml_catastro_espanya(iface)
