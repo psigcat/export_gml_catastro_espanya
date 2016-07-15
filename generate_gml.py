@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Utilities that helps generating a spanish cadastre's GML plot file."""
 
-import time
 from qgis.core import QGis, QgsMapLayer, QgsExpression
+import time
 
 # This function has inner functions to try to make the code more readable by starting with the most important functions.
 def genereteCadastreGMLFile(layer, feature, path, area, date=None):
@@ -26,94 +26,46 @@ def genereteCadastreGMLFile(layer, feature, path, area, date=None):
     if date is None:
         date = time.strftime('%Y-%m-%d')
 
+    crs = layer.crs().authid().split(':', 2);
 
-    # Function which actually does the job.
-    def generateFile():
-        """Generates the GML file.
+    # If it is using an unkwown reference system, returns
+    if crs[0] != 'EPSG':
+        raise ValueError(u'El sistema de referencia de coordenadas es de un tipo no procesable')
+    epsg = crs[1]
 
-        :param layer: layer where the information comes from.
-        :type layer: QgsMapLayer
-        :param feature: feature in the layer that contains the information to generate the file.
-        :type feature: QgsFeature
-        :param path: path of the file to write to (any current information will be removed)
-        :type path: str or unicode
-        :param area: area that the user manually calcualted.
-        :type area: str or unicode
-        :param date: date of the modification (formatted 'yyyy-mm-dd'. Today if date is None.
-        :type date: str, unicode or None
-        """
+    # Get values from the feature atributes
+    plotRef = feature["REFCAT"]
+    muniCode = format(feature["DELEGACIO"], '02d') + format(feature["MUNICIPIO"], '03d')
+    plotNum = feature["PARCELA"]
+    
+    # Get geometric attributes
+    bounds = feature.geometry().boundingBox()
+    min_xy = u'%f %f' % (bounds.xMinimum(), bounds.yMinimum()) 
+    max_xy = u'%f %f' % (bounds.xMaximum(), bounds.yMaximum())
+    centroid_xy = u'%f %f' % (QgsExpression('x(centroid($geometry))').evaluate(feature), QgsExpression('y(centroid($geometry))').evaluate(feature))
+    vertex_count = '0'
+    vertex_list = ''
+    geometry = feature.geometry()
 
-        crs = layer.crs().authid().split(':', 2);
+    # TODO (?) support more layers' geometric types
+    if geometry.wkbType() == QGis.WKBPolygon:
+        vertex = geometry.asPolygon()[0]
+        vertex_count = str(len(vertex))
 
-        # If it is using an unkwown reference system, returns
-        if crs[0] != 'EPSG':
-            raise ValueError(u'El sistema de referencia de coordenadas es de un tipo no procesable')
-        epsg = crs[1]
+        try:
+            iterator = iter(vertex)
+            i = next(iterator)
+            vertex_list = u'%f %f' % (i.x(), i.y())
 
-        # Get values from the feature atributes
-        plotRef = feature["REFCAT"]
-        muniCode = format(feature["DELEGACIO"], '02d') + format(feature["MUNICIPIO"], '03d')
-        plotNum = feature["PARCELA"]
-        
-        # Get geometric attributes
-        bounds = feature.geometry().boundingBox()
-        min_xy = u'%f %f' % (bounds.xMinimum(), bounds.yMinimum()) 
-        max_xy = u'%f %f' % (bounds.xMaximum(), bounds.yMaximum())
-        centroid_xy = u'%f %f' % (QgsExpression('x(centroid($geometry))').evaluate(feature), QgsExpression('y(centroid($geometry))').evaluate(feature))
-        vertex_count = '0'
-        vertex_list = ''
-        geometry = feature.geometry()
-        # TODO support more layers' geometric types
-        if geometry.wkbType() == QGis.WKBPolygon:
-            vertex = geometry.asPolygon()[0]
-            vertex_count = str(len(vertex))
+            for i in iterator:
+                vertex_list += u' %f %f' % (i.x(), i.y())
 
-            try:
-                iterator = iter(vertex)
-                i = next(iterator)
-                vertex_list = u'%f %f' % (i.x(), i.y())
-
-                for i in iterator:
-                    vertex_list += u' %f %f' % (i.x(), i.y())
-
-            except StopIteration:
-                pass
+        except StopIteration:
+            pass
 
 
-        # Write the string into a file
-        with open(path, 'w+') as f:
-            genereteWriteString(f, epsg, plotRef, muniCode, plotNum, area, min_xy, max_xy, centroid_xy, vertex_count, vertex_list, date)
-
-
-    # Generates the string that will be written to the file.
-    def genereteWriteString(f, epsg, plotRef, muniCode, plotNum, area, min_xy, max_xy, centroid_xy, vertex_count, vertex_list, date):
-        """Generates the GML string and writes it to the file.
-
-        :param f: file object
-        :type f: file
-        :param epsg: EPSG zone number.
-        :type epsg: str or unicode
-        :param plotRef: plot reference.
-        :type plotRef: str or unicode
-        :param muniCode: municipality code.
-        :type muniCode: str or unicode
-        :param plotNum: plot number (local).
-        :type plotNum: str or unicode
-        :param min_xy: point with the minimum x and y of the plot bounds (formatted as 'x y')
-        :type min_xy: str or unicode
-        :param max_xy: point with the maximum x and y of the plot bounds (formatted as 'x y')
-        :type Max_xy: str or unicode
-        :param centroide_x: the centroid point of the plot (formatted as 'x y')
-        :type centroide_x: str or unicode
-        :param vertex_count: number of vertex points
-        :type vertex_count: str or unicode
-        :param vertex_list: list of all the vertex points (formatted as 'x1 y1 x2 y2')
-        :type vertex_list: str or unicode
-        :param date: date of the update (formatted 'yyyy-mm-dd')
-        :type date: str or unicode
-        """
-
-        # This actually returns the file adding the parameters. 
+    # Write the file
+    with open(path, 'w+') as f:
         f.write(u'<?xml version="1.0" encoding="utf-8"?>\n')
         f.write(u'<!-- Archivo generado automaticamente por el plugin export_gm_cadastro_espanya de QGIS. -->\n')
         f.write(u'<!-- Parcela Catastral de la D.G. del Catastro. -->\n')
@@ -215,7 +167,3 @@ def genereteCadastreGMLFile(layer, feature, path, area, date=None):
         f.write(u'</cp:CadastralZoning>\n')
         f.write(u'</gml:featureMember>\n')
         f.write(u'</gml:FeatureCollection>\n')
-    
-    # ACTUAL FUNCTION CALL
-    # Generating the file.
-    generateFile()
