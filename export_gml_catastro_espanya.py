@@ -41,12 +41,12 @@ class export_gml_catastro_espanya:
         if layer == None:
             return # no layer detected
         if layer.type() != QgsMapLayer.VectorLayer: # TODO (?) add more conditions
-            return # TODO show error popup
+            return # TODO (?) show error popup
 
         # Check that there is, at least, a single feature selected
         features = layer.selectedFeatures()
         if len(features) <= 0:
-            return # TODO show error popup
+            return # TODO (?) show error popup
 
         #TODO (?) iterate features
         feature = features[0]
