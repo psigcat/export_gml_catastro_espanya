@@ -20,9 +20,6 @@ def genereteCadastreGMLFile(layer, feature, path, area, date=None):
     :type date: str, unicode or None
     """
 
-    if layer.type() != QgsMapLayer.VectorLayer:
-        raise ValueError(u'La capa seleccionada es de un tipo no procesable.')
-
     if date is None:
         date = time.strftime('%Y-%m-%d')
 
@@ -34,9 +31,9 @@ def genereteCadastreGMLFile(layer, feature, path, area, date=None):
     epsg = crs[1]
 
     # Get values from the feature atributes
-    plotRef = feature["REFCAT"]
-    muniCode = format(feature["DELEGACIO"], '02d') + format(feature["MUNICIPIO"], '03d')
-    plotNum = feature["PARCELA"]
+    plotRef = feature['REFCAT']
+    muniCode = format(feature['DELEGACIO'], '02d') + format(feature['MUNICIPIO'], '03d')
+    plotNum = feature['PARCELA']
     
     # Get geometric attributes
     bounds = feature.geometry().boundingBox()
