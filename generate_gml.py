@@ -5,7 +5,7 @@ from qgis.core import QGis, QgsMapLayer, QgsExpression
 import time
 
 # This function has inner functions to try to make the code more readable by starting with the most important functions.
-def genereteCadastreGMLFile(layer, feature, path, area, date=None):
+def genereteCadastreGMLFile(layer, feature, path, area, plotNum, date=None):
     """Generates a spanish cadastre's GML plot file.
 
     :param layer: Layer where the information comes from.
@@ -16,6 +16,8 @@ def genereteCadastreGMLFile(layer, feature, path, area, date=None):
     :type path: str or unicode
     :param area: area that the user manually calcualted.
     :type area: str or unicode
+    :param plotNum: local number of the plot.
+    :type plotNum: str or unicode
     :param date: date of the modification (formatted 'yyyy-mm-dd'. Today if date is None.
     :type date: str, unicode or None
     """
@@ -33,7 +35,6 @@ def genereteCadastreGMLFile(layer, feature, path, area, date=None):
     # Get values from the feature atributes
     plotRef = feature['REFCAT']
     muniCode = format(feature['DELEGACIO'], '02d') + format(feature['MUNICIPIO'], '03d')
-    plotNum = feature['PARCELA']
     
     # Get geometric attributes
     bounds = feature.geometry().boundingBox()

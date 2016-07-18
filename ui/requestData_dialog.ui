@@ -6,71 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>234</width>
-    <height>150</height>
+    <width>211</width>
+    <height>152</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Exportando parcela</string>
   </property>
-  <layout class="QVBoxLayout" name="dialogLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
-     <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-     </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="parcela_lbl">
+      <widget class="QLabel" name="refcat_lbl">
        <property name="text">
-        <string>Parcela</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="area_lbl">
-       <property name="text">
-        <string>Area (m²)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="area_dsb">
-       <property name="maximum">
-        <double>9999.989999999999782</double>
-       </property>
-       <property name="singleStep">
-        <double>5.000000000000000</double>
-       </property>
-       <property name="value">
-        <double>100.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QCheckBox" name="diaEdicion_chb">
-       <property name="text">
-        <string>Dia de edición</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QDateEdit" name="diaEdicion_date">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="archivo_lbl">
-       <property name="text">
-        <string>Archivo a exportar</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QPushButton" name="archivo_btn">
-       <property name="text">
-        <string>...</string>
+        <string>Refcat</string>
        </property>
       </widget>
      </item>
@@ -96,77 +45,106 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="num_parcel_lbl">
+       <property name="text">
+        <string>Numero parcela</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="num_parcel_tbx"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="area_lbl">
+       <property name="text">
+        <string>Area (m²)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="area_dsb">
+       <property name="maximum">
+        <double>9999.989999999999782</double>
+       </property>
+       <property name="singleStep">
+        <double>5.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>100.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QCheckBox" name="diaEdicion_chb">
+       <property name="text">
+        <string>Dia de edición</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDateEdit" name="diaEdicion_de">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="calendarPopup">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="enabled">
-      <bool>true</bool>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>3</number>
      </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
-     </property>
-    </widget>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="save_btn">
+       <property name="text">
+        <string>Guardar...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancel_btn">
+       <property name="text">
+        <string>Cancelar</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>area_dsb</tabstop>
-  <tabstop>archivo_btn</tabstop>
-  <tabstop>diaEdicion_chb</tabstop>
-  <tabstop>diaEdicion_date</tabstop>
-  <tabstop>buttonBox</tabstop>
- </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>requestData_dialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>227</x>
-     <y>140</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>193</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
+   <sender>cancel_btn</sender>
+   <signal>clicked()</signal>
    <receiver>requestData_dialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>244</x>
-     <y>140</y>
+     <x>213</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel">
-     <x>253</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>diaEdicion_chb</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>diaEdicion_date</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>63</x>
-     <y>98</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>135</x>
-     <y>103</y>
+     <x>233</x>
+     <y>148</y>
     </hint>
    </hints>
   </connection>

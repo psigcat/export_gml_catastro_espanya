@@ -15,6 +15,7 @@ from ui.requestData_dialog import Ui_requestData_dialog
 class export_gml_catastro_espanya:
     def __init__(self, iface):
         self.iface = iface
+        self.settings = QSettings("PSIG", "export_gml_catastro_espanya")
 
     def initGui(self):
         # Find icon
@@ -52,7 +53,7 @@ class export_gml_catastro_espanya:
         feature = features[0]
 
         # popup dialog
-        dialog = QDialog()
+        dialog = QDialog(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
         dialog.ui = Ui_requestData_dialog()
         dialog.ui.setupUi(dialog)
         dialog.setAttribute(Qt.WA_DeleteOnClose)
@@ -61,31 +62,43 @@ class export_gml_catastro_espanya:
         dialog.ui.parcela_tbx.setText(feature['REFCAT'])
 
         # set default date to today
-        dialog.ui.diaEdicion_date.setDate(QDate.currentDate())
+        dialog.ui.diaEdicion_de.setDate(QDate.currentDate())
 
-        # variable shared with the inner function (file choose dialog)
-        class nonlocal:
-            path = None
+        # allow disable the date and resets to the original value (today)
+        def toggleDE(b):
+            dialog.ui.diaEdicion_de.setEnabled(b)
+            if not b:
+                dialog.ui.diaEdicion_de.setDate(QDate.currentDate())
 
-        # defining and connectiong the archivo_btn clicked() signal
-        def openFileButtonClick():
-            filename = QFileDialog.getSaveFileName(dialog, "Save File", feature['REFCAT']+".gml", "Geography Markup Language File (*.gml)");
-            if filename != "":
-                nonlocal.path = filename
-                dialog.ui.archivo_btn.setText(filename);
-        QObject.connect(dialog.ui.archivo_btn, SIGNAL("clicked()"), openFileButtonClick)
+        QObject.connect(dialog.ui.diaEdicion_chb, SIGNAL("toggled(bool)"), toggleDE)
 
-        def dialogAccepted():
-            if nonlocal.path != None and nonlocal.path != "":
-                if dialog.ui.diaEdicion_chb.isChecked():
-                    date = dialog.ui.diaEdicion_date.date()
-                else:
-                    date = QDate.currentDate()
-                date_s = "%04i-%02i-%02i" % (date.year(), date.month(), date.day())
+        # if dialog accepted
+        def saveButtonClicked():
+            dialog.setVisible(False)
+            path = QFileDialog.getSaveFileName(
+                dialog,
+                "Save File",
+                os.path.join(
+                    self.settings.value("save path", os.path.expanduser("~")),      #default folder
+                    feature['REFCAT']+"_"+dialog.ui.num_parcel_tbx.text()+".gml"    #default filename
+                ),
+                "Geography Markup Language File (*.gml)"
+            )
+
+            if path != None and path != "":
+                self.settings.setValue("save path", os.path.dirname(path))
+
                 area_s = "%.5f" % dialog.ui.area_dsb.value()
-                genereteCadastreGMLFile(layer, feature, nonlocal.path, area_s, date_s)
+                plot_num_s = str(dialog.ui.num_parcel_tbx.text())
+                date = dialog.ui.diaEdicion_de.date()
+                date_s = "%04i-%02i-%02i" % (date.year(), date.month(), date.day())
 
-        QObject.connect(dialog, SIGNAL("accepted()"), dialogAccepted)
+                genereteCadastreGMLFile(layer, feature, path, area_s, plot_num_s, date_s)
+                dialog.accept()
+            else:
+                dialog.reject()
+
+        QObject.connect(dialog.ui.save_btn, SIGNAL("clicked()"), saveButtonClicked)
 
         # execute the dialog execute loop (waits for the result)
         dialog.exec_()
