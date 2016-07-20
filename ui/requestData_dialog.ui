@@ -6,16 +6,42 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>211</width>
-    <height>152</height>
+    <width>339</width>
+    <height>314</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Exportando parcela</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">font: 10pt &quot;Georgia&quot;;</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <family>Georgia</family>
+         <pointsize>10</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>HERRAMIENTA PARA EXPORTAR A GML</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="refcat_lbl">
        <property name="text">

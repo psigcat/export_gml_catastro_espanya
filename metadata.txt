@@ -8,7 +8,7 @@ description=Este plugin sirve para exportar a gml siguiendo las indicaciones del
 about=Este plugin exporta una parcela selccionada a formato gml
 version=0.1
 author=Marti Angelats, David Erill, Carlos Lopez (http://psig.es/)
-email=carlos.lopez@psgi.es
+email=carlos.lopez@psig.es
 
 
 # Recommended items:
