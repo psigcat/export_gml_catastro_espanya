@@ -17,15 +17,14 @@ class export_gml_catastro_espanya:
         self.iface = iface
         self.settings = QSettings("PSIG", "export_gml_catastro_espanya")
 
-    def initGui(self):
-        # Find icon
+        # Find and safe icon
         path = os.path.dirname(os.path.abspath(__file__))
         filename = os.path.abspath(os.path.join(path, 'icon_export_gml_catastro_espanya.png'))
+        self.icon = QIcon(str(filename))
 
-        self.action = QAction(QIcon(str(filename)), "export_gml_catastro_espanya", self.iface.mainWindow())
-        self.action.setObjectName("testAction")
-        self.action.setWhatsThis("Configuration for test plugin")
-        self.action.setStatusTip("This is status tip")
+
+    def initGui(self):
+        self.action = QAction(self.icon, u"Export GML catastro de España", self.iface.mainWindow())
         QObject.connect(self.action, SIGNAL("triggered()"), self.run)
 
         self.iface.addToolBarIcon(self.action)
@@ -57,6 +56,7 @@ class export_gml_catastro_espanya:
         dialog.ui = Ui_requestData_dialog()
         dialog.ui.setupUi(dialog)
         dialog.setAttribute(Qt.WA_DeleteOnClose)
+        dialog.setWindowIcon(self.icon)
 
         # set parcela_tbx text to the plot's reference
         dialog.ui.parcela_tbx.setText(feature['REFCAT'])
