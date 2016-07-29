@@ -2,12 +2,12 @@
 # Mandatory items:
 
 [general]
-name=Export GML catastro de Espana
+name=Export GML catastro de España
 qgisMinimumVersion=2.12
-description=Este plugin sirve para exportar a gml siguiendo las indicaciones del catastro de Espana.
-about=Este plugin exporta una parcela seleccionada a formato gml, la parcela tiene que tener los atributos propios del catastro
+description=Este plugin sirve para exportar a gml siguiendo las indicaciones del catastro de España.
+about=Este plugin exporta una parcela seleccionada a formato gml, la parcela tiene que tener los atributos propios del catastro.
 version=0.1
-author=Marti Angelats, David Erill, Carlos Lopez (http://psig.es/)
+author=Martí Angelats, David Erill, Carlos Lopez (http://psig.es/)
 email=carlos.lopez@psig.es
 
 
