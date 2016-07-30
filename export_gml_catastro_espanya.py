@@ -20,11 +20,14 @@ except AttributeError:
 
 # Translate function
 try:
-    def tr(context, text, disambig):
+    def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, QtGui.QApplication.UnicodeUTF8)
 except AttributeError:
-    def tr(context, text, disambig):
+    def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
+
+def tr(text):
+    return _translate("export_gml_catastro_espanya", text, None)
 
 # TODO documentation
 
