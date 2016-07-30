@@ -73,6 +73,13 @@ class export_gml_catastro_espanya:
             self.__errorPopup("La capa selccionada no contiene los campos necesarios.")
             return
 
+        geometry = feature.geometry()
+
+        # Check for non-implemented geometry WKB types
+        if geometry.wkbType() != QGis.WKBPolygon:
+            self.__errorPopup("Tipo de WKB no compatible.")
+            return
+
         # Set epsg type to the second part of the crs
         epsg = crs[1]
 
@@ -116,11 +123,13 @@ class export_gml_catastro_espanya:
                 self.settings.setValue("save path", os.path.dirname(path))
 
                 # temporal variables
-                bounds = feature.geometry().boundingBox()
+                bounds = geometry.boundingBox()
                 date_value = dialog.ui.diaEdicion_de.date()
-                vertex = getVertex(feature.geometry())
+                vertex = getVertex(geometry)
 
                 # Generate all the necesary arguments to generate the file (in order of function argument)
+                # path
+                # epsg
                 muniCode = format(feature[delegacioIndex], '02d') + format(feature[municipioIndex], '03d')
                 plotNum = str(dialog.ui.num_parcel_tbx.text())
                 plotRef = feature[refcatIndex]
