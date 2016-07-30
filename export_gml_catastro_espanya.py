@@ -124,7 +124,10 @@ class export_gml_catastro_espanya:
                 muniCode = format(feature[delegacioIndex], '02d') + format(feature[municipioIndex], '03d')
                 plotNum = str(dialog.ui.num_parcel_tbx.text())
                 plotRef = feature[refcatIndex]
-                centroid_xy = u'%f %f' % (QgsExpression('x(centroid($geometry))').evaluate(feature), QgsExpression('y(centroid($geometry))').evaluate(feature))
+                centroid_xy = u'%f %f' % (
+                    QgsExpression('x(centroid($geometry))').evaluate(feature),
+                    QgsExpression('y(centroid($geometry))').evaluate(feature)
+                )
                 min_xy = u'%f %f' % (bounds.xMinimum(), bounds.yMinimum()) 
                 max_xy = u'%f %f' % (bounds.xMaximum(), bounds.yMaximum())
                 area = "%.5f" % dialog.ui.area_dsb.value()
