@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'requestData_dialog.ui'
 #
-# Created: Mon Jul 18 13:27:03 2016
+# Created: Sat Jul 30 12:18:13 2016
 #      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,11 +26,26 @@ except AttributeError:
 class Ui_requestData_dialog(object):
     def setupUi(self, requestData_dialog):
         requestData_dialog.setObjectName(_fromUtf8("requestData_dialog"))
-        requestData_dialog.resize(211, 152)
+        requestData_dialog.resize(339, 314)
         requestData_dialog.setWindowTitle(_fromUtf8("Exportando parcela"))
+        requestData_dialog.setStyleSheet(_fromUtf8("font: 10pt \"Georgia\";"))
         self.verticalLayout = QtGui.QVBoxLayout(requestData_dialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout()
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.label = QtGui.QLabel(requestData_dialog)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Georgia"))
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.label.setFont(font)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.verticalLayout_3.addWidget(self.label)
+        self.verticalLayout.addLayout(self.verticalLayout_3)
         self.formLayout = QtGui.QFormLayout()
+        self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout.setObjectName(_fromUtf8("formLayout"))
         self.refcat_lbl = QtGui.QLabel(requestData_dialog)
         self.refcat_lbl.setObjectName(_fromUtf8("refcat_lbl"))
@@ -85,6 +100,7 @@ class Ui_requestData_dialog(object):
         QtCore.QMetaObject.connectSlotsByName(requestData_dialog)
 
     def retranslateUi(self, requestData_dialog):
+        self.label.setText(_translate("requestData_dialog", "HERRAMIENTA PARA EXPORTAR A GML", None))
         self.refcat_lbl.setText(_translate("requestData_dialog", "Refcat", None))
         self.parcela_tbx.setText(_translate("requestData_dialog", "0822805DF1802S", None))
         self.num_parcel_lbl.setText(_translate("requestData_dialog", "Numero parcela", None))
