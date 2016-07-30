@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS>
 	<defaultcodec>UTF-8</defaultcodec>
@@ -33,6 +34,10 @@
 		<message>
 			<source>HERRAMIENTA PARA EXPORTAR A GML</source>
 			<translation>GML EXPORTING TOOL</translation>
+		</message>
+		<message>
+			<source>Exportando parcela</source>
+			<translation>Exporting plot</translation>
 		</message>
 		<message>
 			<source>Refcat</source>

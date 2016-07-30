@@ -4,6 +4,7 @@
 """
 
 import os
+from PyQt4 import QtCore
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
@@ -21,10 +22,10 @@ except AttributeError:
 # Translate function
 try:
     def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, QtGui.QApplication.UnicodeUTF8)
+        return QApplication.translate(context, text, disambig, QApplication.UnicodeUTF8)
 except AttributeError:
     def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+        return QApplication.translate(context, text, disambig)
 
 def tr(text):
     return _translate("export_gml_catastro_espanya", text, None)
@@ -35,12 +36,22 @@ class export_gml_catastro_espanya:
     def __init__(self, iface):
         self.iface = iface
 
+        # initialize plugin directory and locale
+        self.plugin_dir = os.path.dirname(__file__)
+        self.pluginName = os.path.basename(self.plugin_dir)
+        locale = QSettings().value('locale/userLocale')[0:2]
+        locale_path = os.path.join(self.plugin_dir, 'i18n', 'export_gml_catastro_espanya_{}.qm'.format(locale))
+        if os.path.exists(locale_path):
+            self.translator = QTranslator()
+            self.translator.load(locale_path)
+            if qVersion() > '4.3.3':
+                QCoreApplication.installTranslator(self.translator)
+
         # Get the settings
         self.settings = QSettings("PSIG", "export_gml_catastro_espanya")
 
         # Find and safe icon
-        path = os.path.dirname(os.path.abspath(__file__))
-        filename = os.path.abspath(os.path.join(path, 'icon_export_gml_catastro_espanya.png'))
+        filename = os.path.abspath(os.path.join(self.plugin_dir, 'icon_export_gml_catastro_espanya.png'))
         self.icon = QIcon(str(filename))
 
 
@@ -105,6 +116,7 @@ class export_gml_catastro_espanya:
         dialog = QDialog(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
         dialog.ui = Ui_requestData_dialog()
         dialog.ui.setupUi(dialog)
+        dialog.setWindowTitle(_translate("requestData_dialog", "Exportando parcela", None))
         dialog.setAttribute(Qt.WA_DeleteOnClose)
         dialog.setWindowIcon(self.icon)
 
