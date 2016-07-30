@@ -1,71 +1,14 @@
 # -*- coding: utf-8 -*-
-"""Module that contains the function that generetes the a spanish cadastre's GML plot file."""
+"""
 
-from qgis.core import QGis, QgsMapLayer, QgsExpression
-import time
+"""
+#TODO documentation
 
-# This function has inner functions to try to make the code more readable by starting with the most important functions.
-def genereteCadastreGMLFile(layer, feature, path, area, plotNum, date=None):
-    """Generates a spanish cadastre's GML plot file.
-
-    :param layer: Layer where the information comes from.
-    :type layer: QgsMapLayer
-    :param feature: Feature in the layer that contains the information to generate the file.
-    :type feature: QgsFeature
-    :param path: str or unicode
-    :type path: str or unicode
-    :param area: area that the user manually calcualted.
-    :type area: str or unicode
-    :param plotNum: local number of the plot.
-    :type plotNum: str or unicode
-    :param date: date of the modification (formatted 'yyyy-mm-dd'. Today if date is None.
-    :type date: str, unicode or None
-    """
-
-    if date is None:
-        date = time.strftime('%Y-%m-%d')
-
-    crs = layer.crs().authid().split(':', 2);
-
-    # If it is using an unkwown reference system, returns
-    if crs[0] != 'EPSG':
-        raise ValueError(u'El sistema de referencia de coordenadas es de un tipo no procesable')
-    epsg = crs[1]
-
-    # Get values from the feature atributes
-    plotRef = feature['REFCAT']
-    muniCode = format(feature['DELEGACIO'], '02d') + format(feature['MUNICIPIO'], '03d')
-    
-    # Get geometric attributes
-    bounds = feature.geometry().boundingBox()
-    min_xy = u'%f %f' % (bounds.xMinimum(), bounds.yMinimum()) 
-    max_xy = u'%f %f' % (bounds.xMaximum(), bounds.yMaximum())
-    centroid_xy = u'%f %f' % (QgsExpression('x(centroid($geometry))').evaluate(feature), QgsExpression('y(centroid($geometry))').evaluate(feature))
-    vertex_count = '0'
-    vertex_list = ''
-    geometry = feature.geometry()
-
-    # TODO (?) support more layers' geometric types
-    if geometry.wkbType() == QGis.WKBPolygon:
-        vertex = geometry.asPolygon()[0]
-        vertex_count = str(len(vertex))
-
-        try:
-            iterator = iter(vertex)
-            i = next(iterator)
-            vertex_list = u'%f %f' % (i.x(), i.y())
-
-            for i in iterator:
-                vertex_list += u' %f %f' % (i.x(), i.y())
-
-        except StopIteration:
-            pass
-
-
-    # Write the file
+def genereteCadastreGMLFile(path, epsg, muniCode, plotNum, plotRef, centroid_xy, min_xy, max_xy, area, date, vertex_count, vertex_list):
+    # Writes the file itself (pretty much a file with a few variables that change)
     with open(path, 'w+') as f:
         f.write(u'<?xml version="1.0" encoding="utf-8"?>\n')
-        f.write(u'<!-- Archivo generado automaticamente por el plugin export_gm_cadastro_espanya de QGIS. -->\n')
+        f.write(u'<!-- Archivo generado automaticamente por el plugin Export GML catastro de España de QGIS. -->\n'.encode('utf8', 'replace'))
         f.write(u'<!-- Parcela Catastral de la D.G. del Catastro. -->\n')
         f.write(u'<gml:FeatureCollection gml:id="ES.SDGC.CP" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cp="urn:x-inspire:specification:gmlas:CadastralParcels:3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:x-inspire:specification:gmlas:CadastralParcels:3.0 http://inspire.ec.europa.eu/schemas/cp/3.0/CadastralParcels.xsd">\n')
         f.write(u'<gml:featureMember>\n')
