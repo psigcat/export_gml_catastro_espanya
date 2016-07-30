@@ -8,8 +8,23 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 from generate_gml import genereteCadastreGMLFile
-from ui.requestData_dialog import Ui_requestData_dialog, _translate
+from ui.requestData_dialog import Ui_requestData_dialog
 
+
+# Unicode QString generator function
+try:
+    qu = QtCore.QString.fromUtf8
+except AttributeError:
+    def qu(s):
+        return s
+
+# Translate function
+try:
+    def tr(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, QtGui.QApplication.UnicodeUTF8)
+except AttributeError:
+    def tr(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 # TODO documentation
 
@@ -28,15 +43,15 @@ class export_gml_catastro_espanya:
 
     def initGui(self):
         # Add menu and toolbar entries
-        self.action = QAction(self.icon, u"Export to GML", self.iface.mainWindow())
+        self.action = QAction(self.icon, tr("Generar GML para el catastro español"), self.iface.mainWindow())
         QObject.connect(self.action, SIGNAL("triggered()"), self.run)
         self.iface.addToolBarIcon(self.action)
-        self.iface.addPluginToMenu(u"Export GML catastro de España", self.action)
+        self.iface.addPluginToMenu(qu("Export GML catastro de España"), self.action)
 
 
     def unload(self):
         # Remove menu and toolbar entries
-        self.iface.removePluginMenu(u"Export GML catastro de España", self.action)
+        self.iface.removePluginMenu(qu("Export GML catastro de España"), self.action)
         self.iface.removeToolBarIcon(self.action)
 
     def run(self):
@@ -67,17 +82,17 @@ class export_gml_catastro_espanya:
         #   If they do not exist or the CRS is not EPGS, it means that the gml file cannot be generated.
         #   If so, popup an error and end (there may be an error in the map, so feedback is required)
         if crs[0] != 'EPSG':
-            self.__errorPopup("La capa seleccionada no utiliza un sistema de coodenadas compatible.")
+            self.__errorPopup(tr("La capa seleccionada no utiliza un sistema de coodenadas compatible."))
             return
         if refcatIndex < 0 or refcatIndex < 0 or refcatIndex < 0:
-            self.__errorPopup("La capa selccionada no contiene los campos necesarios.")
+            self.__errorPopup(tr("La capa selccionada no contiene los campos necesarios."))
             return
 
         geometry = feature.geometry()
 
         # Check for non-implemented geometry WKB types
         if geometry.wkbType() != QGis.WKBPolygon:
-            self.__errorPopup("Tipo de WKB no compatible.")
+            self.__errorPopup(tr("Tipo de WKB no compatible."))
             return
 
         # Set epsg type to the second part of the crs
@@ -165,7 +180,7 @@ class export_gml_catastro_espanya:
         dialog.exec_()
 
     def __errorPopup(self, msg):
-        messageBox = QMessageBox(QMessageBox.Critical, "Error", msg)
+        messageBox = QMessageBox(QMessageBox.Critical, tr("Error"), msg)
         messageBox.setWindowIcon(self.icon)
         messageBox.exec_()
 
