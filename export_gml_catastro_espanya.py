@@ -11,7 +11,7 @@ from generate_gml import genereteCadastreGMLFile
 from ui.requestData_dialog import Ui_requestData_dialog, _translate
 
 
-#TODO documentation
+# TODO documentation
 
 class export_gml_catastro_espanya:
     def __init__(self, iface):
@@ -66,9 +66,11 @@ class export_gml_catastro_espanya:
         # This fields are always present in the spanish cadastre files.
         #   If they do not exist or the CRS is not EPGS, it means that the gml file cannot be generated.
         #   If so, popup an error and end (there may be an error in the map, so feedback is required)
-        if refcatIndex < 0 or refcatIndex < 0 or refcatIndex < 0 or crs[0] != 'EPSG':
-            # show popup error (unparseble error)
-            # TODO make error popup
+        if crs[0] != 'EPSG':
+            self.__errorPopup("La capa seleccionada no utiliza un sistema de coodenadas compatible.")
+            return
+        if refcatIndex < 0 or refcatIndex < 0 or refcatIndex < 0:
+            self.__errorPopup("La capa selccionada no contiene los campos necesarios.")
             return
 
         # Set epsg type to the second part of the crs
@@ -150,11 +152,15 @@ class export_gml_catastro_espanya:
         # execute the dialog execute loop (waits for the result)
         dialog.exec_()
 
+    def __errorPopup(self, msg):
+        messageBox = QMessageBox(QMessageBox.Critical, "Error", msg)
+        messageBox.setWindowIcon(self.icon)
+        messageBox.exec_()
 
 
 def getVertex(geometry):
 
-    #TODO add more geometry wkbTypes support
+    # possible TODO add more geometry wkbTypes support
     if geometry.wkbType() == QGis.WKBPolygon:
         return geometry.asPolygon()[0]
     else:
