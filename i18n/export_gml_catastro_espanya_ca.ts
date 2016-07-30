@@ -1,5 +1,7 @@
 <!DOCTYPE TS>
 <TS>
+	<defaultcodec>UTF-8</defaultcodec>
+
 	<!-- Plugin file translation -->
 	<context>
 		<name>export_gml_catastro_espanya</name>
