@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>339</width>
-    <height>314</height>
+    <width>347</width>
+    <height>195</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,6 +32,12 @@
        </property>
        <property name="text">
         <string>HERRAMIENTA PARA EXPORTAR A GML</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
