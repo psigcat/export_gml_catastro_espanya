@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-
 """
+# TODO documentation
 
 import os
 from PyQt4 import QtCore
@@ -26,11 +26,9 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QApplication.translate(context, text, disambig)
-
 def tr(text):
     return _translate("export_gml_catastro_espanya", text, None)
 
-# TODO documentation
 
 class export_gml_catastro_espanya:
     def __init__(self, iface):
@@ -84,9 +82,17 @@ class export_gml_catastro_espanya:
         feature = features[0]
 
         # Safe the references of the used feature fields
-        refcatIndex = feature.fieldNameIndex('REFCAT')
         delegacioIndex = feature.fieldNameIndex('DELEGACIO')
         municipioIndex = feature.fieldNameIndex('MUNICIPIO')
+        refcatIndex = feature.fieldNameIndex('REFCAT')
+        if refcatIndex < 0:
+            # If the feature REFCAT doesn't exist, it is possible that is split into two features: pcat1 and pcat2
+            try:
+                refcat = feature['pcat1'] +  feautre['pcat2']
+            except KeyError:
+                refcat = None
+        else:
+            refcat = feature[refcatIndex]
 
         # Get splitted crs
         crs = layer.crs().authid().split(':', 2);
@@ -98,7 +104,7 @@ class export_gml_catastro_espanya:
         if crs[0] != 'EPSG':
             self.__errorPopup(tr("La capa seleccionada no utiliza un sistema de coodenadas compatible."))
             return
-        if refcatIndex < 0 or refcatIndex < 0 or refcatIndex < 0:
+        if delegacioIndex < 0 or municipioIndex < 0 or not refcat:
             self.__errorPopup(tr("La capa selccionada no contiene los campos necesarios."))
             return
 
@@ -121,7 +127,7 @@ class export_gml_catastro_espanya:
         dialog.setWindowIcon(self.icon)
 
         # set parcela_tbx text to the plot's reference
-        dialog.ui.parcela_tbx.setText(feature[refcatIndex])
+        dialog.ui.parcela_tbx.setText(refcat)
 
         # set default date to today
         dialog.ui.diaEdicion_de.setDate(QDate.currentDate())
@@ -142,7 +148,7 @@ class export_gml_catastro_espanya:
                 None,
                 os.path.join(
                     self.settings.value("save path", os.path.expanduser("~")),      #default folder
-                    feature[refcatIndex]+"_"+dialog.ui.num_parcel_tbx.text()+".gml" #default filename
+                    refcat+"_"+dialog.ui.num_parcel_tbx.text()+".gml" #default filename
                 ),
                 "Geography Markup Language File (*.gml)"
             )
@@ -162,7 +168,7 @@ class export_gml_catastro_espanya:
                 # epsg
                 muniCode = format(feature[delegacioIndex], '02d') + format(feature[municipioIndex], '03d')
                 plotNum = str(dialog.ui.num_parcel_tbx.text())
-                plotRef = feature[refcatIndex]
+                plotRef = refcat
                 centroid_xy = u'%f %f' % (
                     QgsExpression('x(centroid($geometry))').evaluate(feature),
                     QgsExpression('y(centroid($geometry))').evaluate(feature)
