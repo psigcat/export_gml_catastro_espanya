@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>347</width>
-    <height>195</height>
+    <height>246</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,46 +55,24 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="parcela_tbx">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="mouseTracking">
-        <bool>false</bool>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>0822805DF1802S</string>
-       </property>
-       <property name="frame">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="num_parcel_lbl">
        <property name="text">
         <string>Numero parcela</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="3" column="1">
       <widget class="QLineEdit" name="num_parcel_tbx"/>
      </item>
-     <item row="2" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="area_lbl">
        <property name="text">
         <string>Area (m²)</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="4" column="1">
       <widget class="QDoubleSpinBox" name="area_dsb">
        <property name="maximum">
         <double>9999.989999999999782</double>
@@ -107,14 +85,14 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="5" column="0">
       <widget class="QCheckBox" name="diaEdicion_chb">
        <property name="text">
         <string>Dia de edición</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="5" column="1">
       <widget class="QDateEdit" name="diaEdicion_de">
        <property name="enabled">
         <bool>false</bool>
@@ -123,6 +101,29 @@
         <bool>true</bool>
        </property>
       </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="deleg_lbl">
+       <property name="text">
+        <string>Delegación</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="muni_lbl">
+       <property name="text">
+        <string>Municipio</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="deleg_tbx"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="muni_tbx"/>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="parcela_tbx"/>
      </item>
     </layout>
    </item>

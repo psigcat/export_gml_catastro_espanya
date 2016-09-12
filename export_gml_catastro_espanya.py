@@ -82,7 +82,7 @@ class export_gml_catastro_espanya:
         feature = features[0]
 
         # Safe the references of the used feature fields
-        delegacioIndex = feature.fieldNameIndex('DELEGACIO')
+        delegacionIndex = feature.fieldNameIndex('DELEGACIO')
         municipioIndex = feature.fieldNameIndex('MUNICIPIO')
         refcatIndex = feature.fieldNameIndex('REFCAT')
         if refcatIndex < 0:
@@ -104,13 +104,10 @@ class export_gml_catastro_espanya:
         if crs[0] != 'EPSG':
             self.__errorPopup(tr("La capa seleccionada no utiliza un sistema de coodenadas compatible."))
             return
-        if delegacioIndex < 0 or municipioIndex < 0 or not refcat:
-            self.__errorPopup(tr("La capa selccionada no contiene los campos necesarios."))
-            return
 
-        geometry = feature.geometry()
 
         # Check for non-implemented geometry WKB types
+        geometry = feature.geometry()
         if geometry.wkbType() != QGis.WKBPolygon:
             self.__errorPopup(tr("Tipo de WKB no compatible."))
             return
@@ -126,8 +123,19 @@ class export_gml_catastro_espanya:
         dialog.setAttribute(Qt.WA_DeleteOnClose)
         dialog.setWindowIcon(self.icon)
 
-        # set parcela_tbx text to the plot's reference
-        dialog.ui.parcela_tbx.setText(refcat)
+        # If we already have the values of the textboxes, fill and disable them.
+        if refcat is not None:
+            dialog.ui.parcela_tbx.setEnabled(False)
+            dialog.ui.parcela_tbx.setText(refcat)
+
+        if delegacionIndex >= 0:
+            dialog.ui.deleg_tbx.setEnabled(False)
+            dialog.ui.deleg_tbx.setText(str(feature[delegacionIndex]))
+
+        if municipioIndex >= 0:
+            dialog.ui.muni_tbx.setEnabled(False)
+            dialog.ui.muni_tbx.setText(str(feature[municipioIndex]))
+
 
         # set default date to today
         dialog.ui.diaEdicion_de.setDate(QDate.currentDate())
@@ -166,7 +174,7 @@ class export_gml_catastro_espanya:
                 # Generate all the necesary arguments to generate the file (in order of function argument)
                 # path
                 # epsg
-                muniCode = format(feature[delegacioIndex], '02d') + format(feature[municipioIndex], '03d')
+                muniCode = format(feature[delegacionIndex], '02d') + format(feature[municipioIndex], '03d')
                 plotNum = str(dialog.ui.num_parcel_tbx.text())
                 plotRef = refcat
                 centroid_xy = u'%f %f' % (

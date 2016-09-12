@@ -15,10 +15,6 @@
 			<translation>The selected layer doesn't use a supported CRS.</translation>
 		</message>
 		<message>
-			<source>La capa selccionada no contiene los campos necesarios.</source>
-			<translation>The selected layed doesn't contain the required fields.</translation>
-		</message>
-		<message>
 			<source>Tipo de WKB no compatible.</source>
 			<translation>Unsopported WKB Type.</translation>
 		</message>
@@ -44,8 +40,12 @@
 			<translation>Refcat</translation>
 		</message>
 		<message>
-			<source>0822805DF1802S</source>
-			<translation></translation>
+			<source>Delegación</source>
+			<translation>Borough</translation>
+		</message>
+		<message>
+			<source>Municipio</source>
+			<translation>Municipality</translation>
 		</message>
 		<message>
 			<source>Numero parcela</source>

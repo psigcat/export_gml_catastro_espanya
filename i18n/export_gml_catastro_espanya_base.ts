@@ -15,10 +15,6 @@
 			<translation type="unfinished"></translation>
 		</message>
 		<message>
-			<source>La capa selccionada no contiene los campos necesarios.</source>
-			<translation type="unfinished"></translation>
-		</message>
-		<message>
 			<source>Tipo de WKB no compatible.</source>
 			<translation type="unfinished"></translation>
 		</message>
@@ -44,7 +40,11 @@
 			<translation type="unfinished"></translation>
 		</message>
 		<message>
-			<source>0822805DF1802S</source>
+			<source>Delegación</source>
+			<translation type="unfinished"></translation>
+		</message>
+		<message>
+			<source>Municipio</source>
 			<translation type="unfinished"></translation>
 		</message>
 		<message>
