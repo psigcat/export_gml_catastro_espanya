@@ -12,31 +12,17 @@ from generate_gml import genereteCadastreGMLFile
 from ui.requestData_dialog import Ui_requestData_dialog
 
 
-# Unicode QString generator function
-try:
-    qu = QtCore.QString.fromUtf8
-except AttributeError:
-    def qu(s):
-        return s
-
-# Translate function
-try:
-    def _translate(context, text, disambig):
-        return QApplication.translate(context, text, disambig, QApplication.UnicodeUTF8)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QApplication.translate(context, text, disambig)
-def tr(text):
-    return _translate("export_gml_catastro_espanya", text, None)
-
-
+# Main plugin's class (where all the magic happens)
 class export_gml_catastro_espanya:
     def __init__(self, iface):
-        self.iface = iface
-
-        # initialize plugin directory and locale
+        # Save the plugin's name and the path to the containing folder
         self.plugin_dir = os.path.dirname(__file__)
         self.pluginName = os.path.basename(self.plugin_dir)
+
+        # Safe the QGIS iface
+        self.iface = iface
+
+        # Translate, if a translation exist, to the local language
         locale = QSettings().value('locale/userLocale')[0:2]
         locale_path = os.path.join(self.plugin_dir, 'i18n', 'export_gml_catastro_espanya_{}.qm'.format(locale))
         if os.path.exists(locale_path):
@@ -45,16 +31,17 @@ class export_gml_catastro_espanya:
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
-        # Get the settings
+
+        # Get the QSettings (saves configuration)
         self.settings = QSettings("PSIG", "export_gml_catastro_espanya")
 
-        # Find and safe icon
+        # Find and safe the plugin's icon
         filename = os.path.abspath(os.path.join(self.plugin_dir, 'icon_export_gml_catastro_espanya.png'))
         self.icon = QIcon(str(filename))
 
 
     def initGui(self):
-        # Add menu and toolbar entries
+        # Add menu and toolbar entries (basically allows to activate it)
         self.action = QAction(self.icon, tr("Generar GML para el catastro español"), self.iface.mainWindow())
         QObject.connect(self.action, SIGNAL("triggered()"), self.run)
         self.iface.addToolBarIcon(self.action)
@@ -66,27 +53,28 @@ class export_gml_catastro_espanya:
         self.iface.removePluginMenu(qu("Export GML catastro de España"), self.action)
         self.iface.removeToolBarIcon(self.action)
 
+    # Called when the user clicks the icon or the menu entry
     def run(self):
+        # Gets the selected layer
         layer = self.iface.activeLayer()
 
-        # if the selected layer is not of the correct type, do nothing and end
+        # If the selected layer is not the correct type, do nothing and return
         if layer == None or layer.type() != QgsMapLayer.VectorLayer:
             return
 
+        # Get the selected feature AKA plot). Only a single one (end if there are none or more).
         features = layer.selectedFeatures()
-
-        # if there is not one (and only one) feature sleected, do nothing and end
         if len(features) != 1:
             return
-
         feature = features[0]
 
         # Safe the references of the used feature fields
         delegacionIndex = feature.fieldNameIndex('DELEGACIO')
         municipioIndex = feature.fieldNameIndex('MUNICIPIO')
         refcatIndex = feature.fieldNameIndex('REFCAT')
+
+        # If the feature REFCAT doesn't exist, it is possible that is split into two features: pcat1 and pcat2
         if refcatIndex < 0:
-            # If the feature REFCAT doesn't exist, it is possible that is split into two features: pcat1 and pcat2
             try:
                 refcat = feature['pcat1'] +  feautre['pcat2']
             except KeyError:
@@ -94,13 +82,11 @@ class export_gml_catastro_espanya:
         else:
             refcat = feature[refcatIndex]
 
-        # Get splitted crs
-        crs = layer.crs().authid().split(':', 2);
-
 
         # This fields are always present in the spanish cadastre files.
         #   If they do not exist or the CRS is not EPGS, it means that the gml file cannot be generated.
-        #   If so, popup an error and end (there may be an error in the map, so feedback is required)
+        #   If so, popup an error and return (there may be an error in the map, so feedback is required)
+        crs = layer.crs().authid().split(':', 2);
         if crs[0] != 'EPSG':
             self.__errorPopup(tr("La capa seleccionada no utiliza un sistema de coodenadas compatible."))
             return
@@ -115,7 +101,7 @@ class export_gml_catastro_espanya:
         # Set epsg type to the second part of the crs
         epsg = crs[1]
 
-        # popup dialog
+        # Setting the options' popup dialog
         dialog = QDialog(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
         dialog.ui = Ui_requestData_dialog()
         dialog.ui.setupUi(dialog)
@@ -172,8 +158,6 @@ class export_gml_catastro_espanya:
                 vertex = getVertex(geometry)
 
                 # Generate all the necesary arguments to generate the file (in order of function argument)
-                # path
-                # epsg
                 muniCode = format(feature[delegacionIndex], '02d') + format(feature[municipioIndex], '03d')
                 plotNum = str(dialog.ui.num_parcel_tbx.text())
                 plotRef = refcat
@@ -208,14 +192,38 @@ class export_gml_catastro_espanya:
         # execute the dialog execute loop (waits for the result)
         dialog.exec_()
 
+
+    # Popups an error (utility)
     def __errorPopup(self, msg):
         messageBox = QMessageBox(QMessageBox.Critical, tr("Error"), msg)
         messageBox.setWindowIcon(self.icon)
         messageBox.exec_()
 
 
-def getVertex(geometry):
 
+
+# Utilities
+
+# Unicode QString generator function
+try:
+    qu = QtCore.QString.fromUtf8
+except AttributeError:
+    def qu(s):
+        return s
+
+# Qt translate function
+try:
+    def _translate(context, text, disambig):
+        return QApplication.translate(context, text, disambig, QApplication.UnicodeUTF8)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QApplication.translate(context, text, disambig)
+def tr(text):
+    return _translate("export_gml_catastro_espanya", text, None)
+
+
+# Returns the vertex of the geometry object
+def getVertex(geometry):
     # possible TODO add more geometry wkbTypes support
     if geometry.wkbType() == QGis.WKBPolygon:
         return geometry.asPolygon()[0]
