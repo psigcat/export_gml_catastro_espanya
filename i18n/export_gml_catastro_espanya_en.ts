@@ -16,7 +16,7 @@
 		</message>
 		<message>
 			<source>Tipo de WKB no compatible.</source>
-			<translation>Unsopported WKB Type.</translation>
+			<translation>Unsupported WKB Type.</translation>
 		</message>
 		<message>
 			<source>Error</source>
