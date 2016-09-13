@@ -76,7 +76,7 @@ class export_gml_catastro_espanya:
         # If the feature REFCAT doesn't exist, it is possible that is split into two features: pcat1 and pcat2
         if refcatIndex < 0:
             try:
-                refcat = feature['pcat1'] +  feautre['pcat2']
+                refcat = feature['pcat1'] +  feature['pcat2']
             except KeyError:
                 refcat = None
         else:
