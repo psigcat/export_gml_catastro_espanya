@@ -91,13 +91,6 @@ class export_gml_catastro_espanya:
             self.__errorPopup(tr("La capa seleccionada no utiliza un sistema de coodenadas compatible."))
             return
 
-
-        # Check for non-implemented geometry WKB types
-        geometry = feature.geometry()
-        #if geometry.wkbType() != QGis.WKBPolygon:
-        #    self.__errorPopup(tr("Tipo de WKB no compatible."))
-        #    return
-
         # Set epsg type to the second part of the crs
         epsg = crs[1]
 
@@ -153,6 +146,7 @@ class export_gml_catastro_espanya:
                 self.settings.setValue("save path", os.path.dirname(path))
 
                 # temporal variables
+                geometry = feature.geometry()
                 bounds = geometry.boundingBox()
                 date_value = dialog.ui.diaEdicion_de.date()
                 vertex = getVertex(geometry)

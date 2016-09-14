@@ -15,10 +15,6 @@
 			<translation>La capa seleccionada no utilitza un sistema de coordenades compatible.</translation>
 		</message>
 		<message>
-			<source>Tipo de WKB no compatible.</source>
-			<translation>Tipus de WKB no compatible.</translation>
-		</message>
-		<message>
 			<source>Error</source>
 			<translation>Error</translation>
 		</message>

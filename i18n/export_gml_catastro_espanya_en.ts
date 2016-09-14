@@ -15,10 +15,6 @@
 			<translation>The selected layer doesn't use a supported CRS.</translation>
 		</message>
 		<message>
-			<source>Tipo de WKB no compatible.</source>
-			<translation>Unsupported WKB Type.</translation>
-		</message>
-		<message>
 			<source>Error</source>
 			<translation>Error</translation>
 		</message>

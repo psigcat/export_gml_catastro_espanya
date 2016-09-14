@@ -15,10 +15,6 @@
 			<translation type="unfinished"></translation>
 		</message>
 		<message>
-			<source>Tipo de WKB no compatible.</source>
-			<translation type="unfinished"></translation>
-		</message>
-		<message>
 			<source>Error</source>
 			<translation type="unfinished"></translation>
 		</message>
