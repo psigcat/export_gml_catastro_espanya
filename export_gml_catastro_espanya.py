@@ -94,9 +94,9 @@ class export_gml_catastro_espanya:
 
         # Check for non-implemented geometry WKB types
         geometry = feature.geometry()
-        if geometry.wkbType() != QGis.WKBPolygon:
-            self.__errorPopup(tr("Tipo de WKB no compatible."))
-            return
+        #if geometry.wkbType() != QGis.WKBPolygon:
+        #    self.__errorPopup(tr("Tipo de WKB no compatible."))
+        #    return
 
         # Set epsg type to the second part of the crs
         epsg = crs[1]
@@ -222,11 +222,39 @@ def tr(text):
     return _translate("export_gml_catastro_espanya", text, None)
 
 
-# Returns the vertex of the geometry object
+# Returns a QVector of QgsPoints which are the vertex
 def getVertex(geometry):
-    # possible TODO add more geometry wkbTypes support
+    current = geometryToVector(geometry)
+    while len(current) > 0 and type(current[0]) is not QgsPoint:
+        temp = []
+        for sub in current:
+            for e in sub:
+                temp.append(e)
+        current = temp
+    return current
+
+# Converts the geometry into a QVector of its type
+def geometryToVector(geometry):
     if geometry.wkbType() == QGis.WKBPolygon:
-        return geometry.asPolygon()[0]
+        return geometry.asPolygon()
+
+    elif geometry.wkbType() == QGis.QPolygonF:
+        return geometry.asQPolygonF().toPolygon()
+
+    elif geometry.wkbType() == QGis.WKBMultiPolygon:
+        return geometry.asMultiPolygon()
+
+    elif geometry.wkbType() == QGis.WKBMultiPoint:
+        return geometry.asMultiPoint()
+
+    elif geometry.wkbType() == QGis.WKBPoint:
+        return geometry.asPoint()
+
+    elif geometry.wkbType() == QGis.WKBLineString:
+        return geometry.asPolyline()
+
+    elif geometry.wkbType() == QGis.WKBMultiLineString:
+        return geometry.asMultiPolyline()
+
     else:
-        # If it is not a supported type, return an empty list
         return []
