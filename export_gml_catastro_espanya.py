@@ -43,7 +43,7 @@ class export_gml_catastro_espanya:
     def initGui(self):
         # Add menu and toolbar entries (basically allows to activate it)
         self.action = QAction(self.icon, tr("Generar GML para el catastro español"), self.iface.mainWindow())
-        QObject.connect(self.action, SIGNAL("triggered()"), self.run)
+        QObject.connect(self.action, SIGNAL('triggered()'), self.run)
         self.iface.addToolBarIcon(self.action)
         self.iface.addPluginToMenu(qu("Export GML catastro de España"), self.action)
 
