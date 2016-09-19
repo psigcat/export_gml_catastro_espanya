@@ -69,8 +69,14 @@ class export_gml_catastro_espanya:
         feature = features[0]
 
         # Safe the references of the used feature fields
-        delegacionIndex = feature.fieldNameIndex('DELEGACIO')
+        delegacionIndex = feature.fieldNameIndex('DELEGACION')
+        if delegacionIndex < 0:
+            delegacionIndex = feature.fieldNameIndex('DELEGACIO')
+            
         municipioIndex = feature.fieldNameIndex('MUNICIPIO')
+        if municipioIndex < 0:
+            municipioIndex = feature.fieldNameIndex('MUNICIPI')
+
         refcatIndex = feature.fieldNameIndex('REFCAT')
 
         # If the feature REFCAT doesn't exist, it is possible that is split into two features: pcat1 and pcat2
@@ -152,7 +158,7 @@ class export_gml_catastro_espanya:
                 vertex = getVertex(geometry)
 
                 # Generate all the necesary arguments to generate the file (in order of function argument)
-                muniCode = format(feature[delegacionIndex], '02d') + format(feature[municipioIndex], '03d')
+                muniCode = format(dialog.ui.deleg_tbx.text(), '02d') + format(dialog.ui.muni_tbx.text(), '03d')
                 plotNum = str(dialog.ui.num_parcel_tbx.text())
                 plotRef = refcat
                 centroid_xy = u'%f %f' % (
