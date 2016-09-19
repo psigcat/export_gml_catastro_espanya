@@ -72,7 +72,7 @@ class export_gml_catastro_espanya:
         delegacionIndex = feature.fieldNameIndex('DELEGACION')
         if delegacionIndex < 0:
             delegacionIndex = feature.fieldNameIndex('DELEGACIO')
-            
+
         municipioIndex = feature.fieldNameIndex('MUNICIPIO')
         if municipioIndex < 0:
             municipioIndex = feature.fieldNameIndex('MUNICIPI')
@@ -115,11 +115,11 @@ class export_gml_catastro_espanya:
 
         if delegacionIndex >= 0:
             dialog.ui.deleg_tbx.setEnabled(False)
-            dialog.ui.deleg_tbx.setText(str(feature[delegacionIndex]))
+            dialog.ui.deleg_tbx.setText(u'{:03d}'.format(feature[delegacionIndex]))
 
         if municipioIndex >= 0:
             dialog.ui.muni_tbx.setEnabled(False)
-            dialog.ui.muni_tbx.setText(str(feature[municipioIndex]))
+            dialog.ui.muni_tbx.setText(u'{:02d}'.format(feature[municipioIndex]))
 
 
         # set default date to today
@@ -158,25 +158,26 @@ class export_gml_catastro_espanya:
                 vertex = getVertex(geometry)
 
                 # Generate all the necesary arguments to generate the file (in order of function argument)
-                muniCode = format(dialog.ui.deleg_tbx.text(), '02d') + format(dialog.ui.muni_tbx.text(), '03d')
+
+                muniCode = '{:0>3s}{:0>2s}'.format(dialog.ui.deleg_tbx.text(), dialog.ui.muni_tbx.text())
                 plotNum = str(dialog.ui.num_parcel_tbx.text())
                 plotRef = refcat
-                centroid_xy = u'%f %f' % (
+                centroid_xy = u'{:f} {:f}'.format(
                     QgsExpression('x(centroid($geometry))').evaluate(feature),
                     QgsExpression('y(centroid($geometry))').evaluate(feature)
                 )
-                min_xy = u'%f %f' % (bounds.xMinimum(), bounds.yMinimum()) 
-                max_xy = u'%f %f' % (bounds.xMaximum(), bounds.yMaximum())
-                area = "%.5f" % dialog.ui.area_dsb.value()
-                date = "%04i-%02i-%02i" % (date_value.year(), date_value.month(), date_value.day())
+                min_xy = u'{:f} {:f}'.format(bounds.xMinimum(), bounds.yMinimum()) 
+                max_xy = u'{:f} {:f}'.format(bounds.xMaximum(), bounds.yMaximum())
+                area = u':.5f'.format(dialog.ui.area_dsb.value())
+                date = u'{:04d}-{:02d}-{:02d}'.format(date_value.year(), date_value.month(), date_value.day())
                 vertex_count = str(len(vertex))
                 vertex_list = ''
                 try:
                     iterator = iter(vertex)
                     i = next(iterator)
-                    vertex_list = u'%f %f' % (i.x(), i.y())
+                    vertex_list = u'{:f} {:f}'.format(i.x(), i.y())
                     for i in iterator:
-                        vertex_list += u' %f %f' % (i.x(), i.y())
+                        vertex_list += u' {:f} {:f}'.format(i.x(), i.y())
                 except StopIteration:
                     # if there are no vertex, do nothing
                     pass
